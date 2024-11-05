@@ -1,4 +1,4 @@
-<script>
+
 // Function to apply different bottom margins based on the previous element
 function applyCustomMarginBasedOnPreviousElement(newElement, previousElement) {
   // Check the classes of the previous and new elements to apply the correct margin
@@ -13,7 +13,7 @@ function applyCustomMarginBasedOnPreviousElement(newElement, previousElement) {
   } else if (previousElement.classList.contains('dialog-block') && newElement.classList.contains('scene-line')) {
     newElement.style.marginTop = '0px'; // Condition 5
   }
-}
+};
 
 // Event listener for 's' key to add a scene-block
 document.addEventListener('keydown', function(event) {
@@ -322,4 +322,3 @@ document.addEventListener('blur', function(event) {
         }
     }
 }, true); // 'true' enables event capturing so blur can be detected
-</script>
