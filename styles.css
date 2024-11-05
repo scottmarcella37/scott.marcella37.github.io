@@ -1,0 +1,138 @@
+body {
+  height: 100%;
+  width: 100%;
+}
+
+.shortcuts {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  width: 150px;
+  background-color: lightgrey;
+  padding: 16px;
+  font-family: helvetica;
+}
+
+.key {
+  margin-bottom: 24px;
+}
+
+.sub {
+  font-size: 12px;
+  
+}
+
+.print {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  height: 32px;
+  width: 100px;
+  background-color: blue;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.print:hover {
+  opacity: .8;
+}
+
+.page {
+  width: 1120px;
+  min-height: 1320px;
+  height: auto;
+  margin: 0 auto;
+  padding-bottom: 60px;
+  border: 1px solid lightgrey;
+}
+
+.title {
+  width: 50%;
+  resize: none;
+  height: auto;
+  margin: 100px 25% 0;
+  text-transform: uppercase;
+  text-decoration: underline;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  border: 1px solid transparent;
+  text-align: center;
+}
+
+.slug {
+  width: 50%;
+  height: 18px;
+  margin: 24px 0 0;
+  resize: none;
+  text-transform: uppercase;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  border: 1px solid transparent;
+  display: block;
+}
+
+.action, .sl {
+  width: 100%;
+  height: auto;
+  margin: 8px 0;
+  resize: none;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  border: 1px solid transparent;
+  display: block;
+}
+
+.character {
+  width: 30%;
+  height: 18px;
+  margin: 0 auto;
+  resize: none;
+  text-transform: uppercase;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  border: 1px solid transparent;
+  display: block;
+  text-align: center;
+}
+
+.paren {
+  width: 30%;
+  height: 18px;
+  margin: 0 auto;
+  resize: none;
+  text-transform: lowercase;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  border: 1px solid transparent;
+  display: block;
+  text-align: center;
+}
+
+.lines {
+  width: 45%;
+  height: auto;
+  margin: 0 auto;
+  resize: none;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  border: 1px solid transparent;
+  display: block;
+  text-align: left;
+
+}
+
+textarea:focus {
+  outline: none;
+  border: 1px solid transparent;
+}
+
+.scene {
+  background-color: none;
+}
+
+.script-container {
+  background-color: none;
+  width: 70%;
+  margin: 0 auto;
+}
