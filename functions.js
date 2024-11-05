@@ -1,4 +1,4 @@
-
+<script>
 // Function to apply different bottom margins based on the previous element
 function applyCustomMarginBasedOnPreviousElement(newElement, previousElement) {
   // Check the classes of the previous and new elements to apply the correct margin
@@ -322,3 +322,4 @@ document.addEventListener('blur', function(event) {
         }
     }
 }, true); // 'true' enables event capturing so blur can be detected
+</script>
