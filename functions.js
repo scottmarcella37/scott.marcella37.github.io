@@ -1,58 +1,84 @@
-
 // Function to apply different bottom margins based on the previous element
 function applyCustomMarginBasedOnPreviousElement(newElement, previousElement) {
-  // Check the classes of the previous and new elements to apply the correct margin
   if (previousElement.classList.contains('scene-block') && newElement.classList.contains('scene-block')) {
     newElement.style.marginTop = '32px'; // Condition 1
-  } else if (previousElement.classList.contains('scene-block') && newElement.classList.contains('dialog-block')) {
-    newElement.style.marginTop = '8px'; // Condition 2
-  } else if (previousElement.classList.contains('dialog-block') && newElement.classList.contains('scene-block')) {
+  } else if (previousElement.classList.contains('scene-block') && newElement.classList.contains('dialog')) {
+    newElement.style.marginTop = '16px'; // Condition 2
+  } else if (previousElement.classList.contains('dialog') && newElement.classList.contains('scene-block')) {
     newElement.style.marginTop = '32px'; // Condition 3
-  } else if (previousElement.classList.contains('dialog-block') && newElement.classList.contains('dialog-block')) {
-    newElement.style.marginTop = '8px'; // Condition 4
-  } else if (previousElement.classList.contains('dialog-block') && newElement.classList.contains('scene-line')) {
-    newElement.style.marginTop = '0px'; // Condition 5
+  } else if (previousElement.classList.contains('dialog') && newElement.classList.contains('dialog')) {
+    newElement.style.marginTop = '16px'; // Condition 4
+  } else if (previousElement.classList.contains('dialog') && newElement.classList.contains('scene-line')) {
+    newElement.style.marginTop = '16px'; // Condition 5
+  } else if (previousElement.classList.contains('scene-line') && newElement.classList.contains('dialog')) {
+    newElement.style.marginTop = '16px'; // Condition 6
   }
 };
 
+// Function to hide the "character" textarea in the second adjacent "parent" element
+function hideCharacterInSecondAdjacentParen(newElement) {
+    const pageDiv = document.getElementById('page');
+    const children = Array.from(pageDiv.children);
+
+    // Check if the new element and the previous one both contain the "parent" class
+    const lastIndex = children.indexOf(newElement);
+    if (lastIndex > 0) {
+        const previousElement = children[lastIndex - 1];
+
+        if (previousElement.classList.contains('parent') && newElement.classList.contains('parent')) {
+            const characterTextarea = newElement.querySelector('.character');
+            const parenTextarea = newElement.querySelector('.paren');
+            
+            // Hide the character textarea
+            if (characterTextarea) {
+                characterTextarea.style.display = 'none';
+            }
+
+            // Focus the paren textarea if available
+            if (parenTextarea) {
+                parenTextarea.focus();
+            }
+        }
+    }
+
+    // Remove top margin from "paren" textarea if preceded by a "lines" textarea
+    const previousLinesTextarea = newElement.querySelector('.script-container .lines');
+    const parenTextarea = newElement.querySelector('.paren');
+
+    if (previousLinesTextarea && parenTextarea) {
+        parenTextarea.style.marginTop = '0px';
+    }
+}
+
 // Event listener for 's' key to add a scene-block
 document.addEventListener('keydown', function(event) {
-    // Check if no textarea is currently focused
-    if ((event.key === 's' || event.key === 'S') && document.activeElement.tagName !== 'TEXTAREA') {
-        // Prevent the default 's' or 'S' character input
+    if ((event.key === 's' || event.key === 'S') && 
+    document.activeElement.tagName !== 'TEXTAREA' &&
+    !event.metaKey && // Exclude when Command key is pressed (Mac)
+    !event.ctrlKey) {
         event.preventDefault();
-
-        // Define the new code block
         const codeBlock = `
             <div class="scene scene-block">
               <div class="script-container">
-                <textarea rows="1" class="slug" placeholder="Slugline"></textarea>
-                <textarea rows="1" class="action" placeholder="Actionline" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
+                <textarea rows="1" id="inputText" class="slug" placeholder="Slugline"></textarea>
+                <textarea rows="5" id="inputText" class="action" placeholder="Actionline" ></textarea>
               </div>
             </div>
         `;
 
-        // Find the div with the id "page"
         const pageDiv = document.getElementById('page');
-
         if (pageDiv) {
-            // Create a new div element to contain the code block
             const newDiv = document.createElement('div');
             newDiv.innerHTML = codeBlock;
-            newDiv.classList.add('scene-block'); // Add class to identify the type
+            newDiv.classList.add('scene-block');
 
-            // Get the last child (previous element)
             const lastChild = pageDiv.lastElementChild;
-
-            // Apply margin based on the previous element
             if (lastChild) {
                 applyCustomMarginBasedOnPreviousElement(newDiv, lastChild);
             }
 
-            // Append it as the last child
             pageDiv.appendChild(newDiv);
 
-            // Focus on the first textarea (the slugline)
             const firstTextarea = newDiv.querySelector('textarea.slug');
             if (firstTextarea) {
                 firstTextarea.focus();
@@ -61,45 +87,33 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-
 // Event listener for 'd' key to add a dialog-block
 document.addEventListener('keydown', function(event) {
-    // Check if no textarea is currently focused
     if ((event.key === 'd' || event.key === 'D') && document.activeElement.tagName !== 'TEXTAREA') {
-        // Prevent the default 'd' or 'D' character input
         event.preventDefault();
-
-        // Define the new code block
         const codeBlock = `
-            <div class="dialog dialog-block">
+            <div>
               <div class="script-container">
-                <textarea rows="1" class="character" placeholder="Character"></textarea>
-                <textarea rows="1" class="lines" placeholder="Lines" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
-            </div>
+                <textarea rows="1" id="inputText" class="character" placeholder="Character"></textarea>
+                <textarea rows="4" id="inputText" class="lines" placeholder="Lines"></textarea>
               </div>
+            </div>
         `;
 
-        // Find the div with the id "page"
         const pageDiv = document.getElementById('page');
-
         if (pageDiv) {
-            // Create a new div element to contain the code block
             const newDiv = document.createElement('div');
             newDiv.innerHTML = codeBlock;
-            newDiv.classList.add('dialog-block'); // Add class to identify the type
+            newDiv.classList.add('dialog', 'dialog-block');
+           
 
-            // Get the last child (previous element)
             const lastChild = pageDiv.lastElementChild;
-
-            // Apply margin based on the previous element
             if (lastChild) {
                 applyCustomMarginBasedOnPreviousElement(newDiv, lastChild);
             }
 
-            // Append it as the last child
             pageDiv.appendChild(newDiv);
 
-            // Focus on the first textarea (the character name field)
             const firstTextarea = newDiv.querySelector('textarea.character');
             if (firstTextarea) {
                 firstTextarea.focus();
@@ -108,44 +122,37 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
+// Event listener for 'p' key to add a parent dialog-block
 document.addEventListener('keydown', function(event) {
-    // Check if no textarea is currently focused
-    if ((event.key === 'p' || event.key === 'P') && document.activeElement.tagName !== 'TEXTAREA') {
-        // Prevent the default 'p' or 'P' character input
+    if ((event.key === 'p' || event.key === 'P') && document.activeElement.tagName !== 'TEXTAREA' &&
+    !event.metaKey && // Exclude when Command key is pressed (Mac)
+    !event.ctrlKey) {
         event.preventDefault();
-
-        // Define the new code block
         const codeBlock = `
-            <div class="dialog dialog-block">
+            <div>
               <div class="script-container">
-                <textarea rows="1" class="character" placeholder="Character"></textarea>
-                <textarea rows="1" class="paren" placeholder="Parenthetical"></textarea>
-                <textarea rows="1" class="lines" placeholder="Lines" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
-            </div>
+                <textarea rows="1" id="inputText" class="character" placeholder="Character"></textarea>
+                <textarea rows="1" id="inputText" class="paren" placeholder="Parenthetical"></textarea>
+                <textarea rows="4" id="inputText" class="lines" placeholder="Lines"></textarea>
               </div>
+            </div>
         `;
 
-        // Find the div with the id "page"
         const pageDiv = document.getElementById('page');
-
         if (pageDiv) {
-            // Create a new div element to contain the code block
             const newDiv = document.createElement('div');
             newDiv.innerHTML = codeBlock;
-            newDiv.classList.add('dialog-block'); // Add class to identify the type
+            newDiv.classList.add('dialog', 'parent'); // Ensure 'parent' class is added
 
-            // Get the last child (previous element)
             const lastChild = pageDiv.lastElementChild;
-
-            // Apply margin based on the previous element
             if (lastChild) {
                 applyCustomMarginBasedOnPreviousElement(newDiv, lastChild);
             }
 
-            // Append it as the last child
             pageDiv.appendChild(newDiv);
 
-            // Focus on the first textarea (the character name field)
+            hideCharacterInSecondAdjacentParen(newDiv); // Call function to hide the character textarea
+
             const firstTextarea = newDiv.querySelector('textarea.character');
             if (firstTextarea) {
                 firstTextarea.focus();
@@ -153,45 +160,34 @@ document.addEventListener('keydown', function(event) {
         }
     }
 });
-
 
 // Event listener for 'l' key to add a scene-line block
 document.addEventListener('keydown', function(event) {
-    // Check if no textarea is currently focused
-    if ((event.key === 'l' || event.key === 'L') && document.activeElement.tagName !== 'TEXTAREA') {
-        // Prevent the default 'l' or 'L' character input
+    if ((event.key === 'l' || event.key === 'L') && document.activeElement.tagName !== 'TEXTAREA' &&
+    !event.metaKey && // Exclude when Command key is pressed (Mac)
+    !event.ctrlKey) {
         event.preventDefault();
-
-        // Define the new code block
         const codeBlock = `
             <div class="scene-line">
               <div class="script-container">
-                <textarea rows="1" class="sl" placeholder="Scene line" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
-            </div>
+                <textarea rows="1" id="inputText" class="sl" placeholder="Scene line"></textarea>
               </div>
+            </div>
         `;
 
-        // Find the div with the id "page"
         const pageDiv = document.getElementById('page');
-
         if (pageDiv) {
-            // Create a new div element to contain the code block
             const newDiv = document.createElement('div');
             newDiv.innerHTML = codeBlock;
-            newDiv.classList.add('scene-line'); // Add class to identify the type
+            newDiv.classList.add('scene-line');
 
-            // Get the last child (previous element)
             const lastChild = pageDiv.lastElementChild;
-
-            // Apply margin based on the previous element
             if (lastChild) {
                 applyCustomMarginBasedOnPreviousElement(newDiv, lastChild);
             }
 
-            // Append it as the last child
             pageDiv.appendChild(newDiv);
 
-            // Focus on the first textarea (the scene line input)
             const firstTextarea = newDiv.querySelector('textarea.sl');
             if (firstTextarea) {
                 firstTextarea.focus();
@@ -200,7 +196,19 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-
+// Tab navigation for textareas
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Tab' && document.activeElement.tagName === 'TEXTAREA') {
+        event.preventDefault();
+        const textareas = Array.from(document.querySelectorAll('textarea'));
+        const currentIndex = textareas.indexOf(document.activeElement);
+        let nextIndex = currentIndex + 1;
+        if (nextIndex >= textareas.length) {
+            nextIndex = 0;
+        }
+        textareas[nextIndex].focus();
+    }
+});
 
 let undoStack = []; // Stack to store removed elements for redoing
 let redoStack = []; // Stack to store undone elements for redoing
@@ -210,11 +218,9 @@ document.addEventListener('keydown', function(event) {
     if ((event.metaKey || event.ctrlKey) && event.key === 'z' && !event.shiftKey) {
         const pageDiv = document.getElementById('page');
 
-        // Check if there's a last child to remove
         if (pageDiv && pageDiv.lastElementChild) {
-            // Remove the last child and store it in the undoStack
             const lastChild = pageDiv.lastElementChild;
-            undoStack.push(lastChild); // Store the removed element for redo
+            undoStack.push(lastChild);
             pageDiv.removeChild(lastChild);
         }
     }
@@ -225,34 +231,25 @@ document.addEventListener('keydown', function(event) {
     if ((event.metaKey || event.ctrlKey) && event.key === 'z' && event.shiftKey) {
         const pageDiv = document.getElementById('page');
 
-        // Check if there are any elements in the undoStack
         if (undoStack.length > 0) {
-            const elementToRedo = undoStack.pop(); // Get the last removed element
-            redoStack.push(elementToRedo); // Store it in the redo stack
-            pageDiv.appendChild(elementToRedo); // Re-add it to the page
+            const elementToRedo = undoStack.pop();
+            redoStack.push(elementToRedo);
+            pageDiv.appendChild(elementToRedo);
         }
     }
 });
 
 function printSpecificElements() {
-    // Get the element you want to print
     var printElement = document.getElementById('page');
+    var paragraphs = printElement.getElementsByTagName('p');
 
-    // Find all the textareas in the element
-    var textareas = printElement.getElementsByTagName('textarea');
-
-    // Loop through each textarea and set its innerHTML to its current value
-    for (var i = 0; i < textareas.length; i++) {
-        textareas[i].innerHTML = textareas[i].value;
-    }
-
-    // Save the original content of the entire page
+    // Store the current page content
     var originalContents = document.body.innerHTML;
 
-    // Replace the body content with the content to print
+    // Replace the body content with the content of the "page" div
     document.body.innerHTML = printElement.innerHTML;
 
-    // Trigger the print dialog
+    // Print the page
     window.print();
 
     // Restore the original page content after printing
@@ -260,65 +257,231 @@ function printSpecificElements() {
 }
 
 document.addEventListener('keydown', function(event) {
-    // Check if the Tab key is pressed and a textarea is currently focused
-    if (event.key === 'Tab' && document.activeElement.tagName === 'TEXTAREA') {
-        // Prevent the default tab behavior
-        event.preventDefault();
-
-        // Get all textarea elements on the page
-        const textareas = Array.from(document.querySelectorAll('textarea'));
-
-        // Find the index of the currently focused textarea
-        const currentIndex = textareas.indexOf(document.activeElement);
-
-        // Determine the next index (looping back to the first one if necessary)
-        let nextIndex = currentIndex + 1;
-
-        // If we're at the last textarea, loop back to the first one
-        if (nextIndex >= textareas.length) {
-            nextIndex = 0;
-        }
-
-        // Focus the next textarea
-        textareas[nextIndex].focus();
-    }
-});
-
-document.addEventListener('keydown', function(event) {
-    // Check if the Enter key is pressed and the focused element is a textarea
     if (event.key === 'Enter' && document.activeElement.tagName === 'TEXTAREA') {
-        // Prevent the default behavior (optional)
         event.preventDefault();
-
-        // Get all textarea elements in the document
         const textareas = Array.from(document.querySelectorAll('textarea'));
-
-        // Find the index of the currently active textarea
         const currentIndex = textareas.indexOf(document.activeElement);
 
-        // Check if there is a textarea below the current one that is empty
         for (let i = currentIndex + 1; i < textareas.length; i++) {
-            if (textareas[i].value.trim() === '') { // Check if the textarea is empty
-                textareas[i].focus(); // Move focus to the empty textarea
-                return; // Exit the function after focusing
+            if (textareas[i].value.trim() === '') {
+                textareas[i].focus();
+                return;
             }
         }
-
-        // If no empty textarea is found, remove focus from the current textarea
         document.activeElement.blur();
     }
 });
 
 document.addEventListener('blur', function(event) {
-    // Check if the event target has the class "paren"
     if (event.target.classList.contains('paren')) {
         const textarea = event.target;
         let inputValue = textarea.value.trim();
 
-        // Check if the input already starts and ends with parentheses
         if (!inputValue.startsWith('(') || !inputValue.endsWith(')')) {
-            // Add parentheses around the input
             textarea.value = `(${inputValue})`;
         }
     }
-}, true); // 'true' enables event capturing so blur can be detected
+}, true);
+
+function convert() {
+    const textareas = document.querySelectorAll('textarea');
+
+    textareas.forEach((textarea, index) => {
+        // Create a new paragraph element
+        const paragraph = document.createElement('p');
+
+        // Set the paragraph's text content to the textarea's value
+        paragraph.textContent = textarea.value;
+
+        // Copy all attributes from the textarea to the paragraph
+        Array.from(textarea.attributes).forEach(attr => {
+            paragraph.setAttribute(attr.name, attr.value);
+        });
+
+        // Determine the next textarea element, if it exists
+        const nextTextarea = textareas[index + 1];
+        
+        /*Apply spacing based on the conditions
+        if (nextTextarea) {
+            if (textarea.classList.contains('scene-block') && nextTextarea.classList.contains('scene-block')) {
+                paragraph.style.marginTop = '32px'; // Condition 1
+            } else if (textarea.classList.contains('scene-block') && nextTextarea.classList.contains('dialog-block')) {
+                paragraph.style.marginTop = '8px'; // Condition 2
+            } else if (textarea.classList.contains('dialog-block') && nextTextarea.classList.contains('scene-block')) {
+                paragraph.style.marginTop = '32px'; // Condition 3
+            } else if (textarea.classList.contains('dialog-block') && nextTextarea.classList.contains('dialog-block')) {
+                paragraph.style.marginTop = '0px'; // Condition 4
+            } else if (textarea.classList.contains('dialog-block') && nextTextarea.classList.contains('scene-line')) {
+                paragraph.style.marginTop = '0px'; // Condition 5
+            }
+        }*/
+
+        // Replace the textarea with the new paragraph in the DOM
+        textarea.replaceWith(paragraph);
+    });
+  document.getElementById('convert').style.display = "none";
+ document.getElementById('revert').style.display = "inline-block";
+  document.getElementById('print').style.display = "inline-block";
+}
+
+
+function revert() {
+    document.querySelectorAll('p').forEach(paragraph => {
+        // Create a new textarea element
+        const textarea = document.createElement('textarea');
+
+        // Set the textarea's value to the paragraph's text content
+        textarea.value = paragraph.textContent;
+
+        // Copy over all attributes from the paragraph to the textarea
+        Array.from(paragraph.attributes).forEach(attr => {
+            textarea.setAttribute(attr.name, attr.value);
+        });
+
+        // Replace the paragraph with the new textarea in the DOM
+        paragraph.replaceWith(textarea);
+    });
+  document.getElementById('revert').style.display = "none";
+  document.getElementById('print').style.display = "none";
+ document.getElementById('convert').style.display = "inline-block";
+}
+
+document.addEventListener('keydown', function(event) {
+    if ((event.metaKey || event.ctrlKey) && event.key === 's') {
+        event.preventDefault(); // Prevent the default save action of the browser
+        saveToLocalStorage();   // Call the save function
+    }
+});
+
+document.addEventListener('keydown', function(event) {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'l') {
+        event.preventDefault(); // Prevent the default load action of the browser
+        loadFromLocalStorage();   // Call the load function
+    }
+});
+
+document.addEventListener('keydown', function(event) {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'p') {
+        event.preventDefault(); // Prevent the default print action of the browser
+        printSpecificElements();   // Call the print function
+    }
+});
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'c' && 
+    document.activeElement.tagName !== 'TEXTAREA') {
+        event.preventDefault(); // Prevent the default print action of the browser
+        convert();   // Call the print function
+    }
+});
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'r' && 
+    document.activeElement.tagName !== 'TEXTAREA') {
+        event.preventDefault(); // Prevent the default print action of the browser
+        revert();   // Call the print function
+    }
+});
+
+// Function to save all textarea values and types to localStorage, including the title
+function saveToLocalStorage() {
+    const pageDiv = document.getElementById('page');
+    const elementsData = [];
+
+    // Save the title separately if it exists
+    const titleTextarea = pageDiv.querySelector('textarea.title');
+    const titleData = titleTextarea ? { 
+        value: titleTextarea.value, 
+        placeholder: titleTextarea.placeholder,
+        rows: titleTextarea.rows,
+        classList: Array.from(titleTextarea.classList) 
+    } : null;
+
+    // Save other elements
+    Array.from(pageDiv.children).forEach((child, index) => {
+        // Skip the title as it's already saved separately
+        if (index === 0 && child.querySelector('textarea.title')) return;
+
+        const textareas = Array.from(child.querySelectorAll('textarea'));
+        const elementData = {
+            classList: Array.from(child.classList),  // Save all classes for div (e.g., dialog, dialog-block)
+            textareas: textareas.map(textarea => ({
+                value: textarea.value,
+                classList: Array.from(textarea.classList),
+                placeholder: textarea.placeholder,
+                rows: textarea.rows,
+                cols: textarea.cols || undefined
+            }))
+        };
+        elementsData.push(elementData);
+    });
+
+    // Store both title and content in localStorage
+    localStorage.setItem('pageData', JSON.stringify({ title: titleData, elements: elementsData }));
+    alert('Data saved to localStorage.');
+}
+
+// Function to load and recreate elements from localStorage, including the title
+function loadFromLocalStorage() {
+    const pageDiv = document.getElementById('page');
+    pageDiv.innerHTML = ''; // Clear existing content
+
+    const savedData = JSON.parse(localStorage.getItem('pageData'));
+
+    if (savedData) {
+        // Load the title if available
+        if (savedData.title) {
+            const titleTextarea = document.createElement('textarea');
+            titleTextarea.rows = savedData.title.rows;
+            titleTextarea.placeholder = savedData.title.placeholder;
+            titleTextarea.value = savedData.title.value;
+            savedData.title.classList.forEach(cls => titleTextarea.classList.add(cls));
+
+            // Ensure the title resizes to content
+            titleTextarea.oninput = function() {
+                this.style.height = "";
+                this.style.height = this.scrollHeight + "px";
+            };
+
+            pageDiv.appendChild(titleTextarea);
+        }
+
+        // Load other elements
+        savedData.elements.forEach(elementData => {
+            const newDiv = document.createElement('div');
+            
+            // Apply all saved classes to the div (e.g., dialog, dialog-block)
+            if (elementData.classList) {
+                elementData.classList.forEach(cls => newDiv.classList.add(cls));
+            }
+
+            const scriptContainer = document.createElement('div');
+            scriptContainer.classList.add('script-container');
+            newDiv.appendChild(scriptContainer);
+
+            elementData.textareas.forEach(textareaData => {
+                const textarea = document.createElement('textarea');
+                textarea.value = textareaData.value;
+                textarea.placeholder = textareaData.placeholder;
+                textarea.rows = textareaData.rows;
+                if (textareaData.cols) textarea.cols = textareaData.cols;
+
+                // Apply saved classes to the textarea
+                if (textareaData.classList) {
+                    textareaData.classList.forEach(cls => textarea.classList.add(cls));
+                }
+                
+                scriptContainer.appendChild(textarea);
+            });
+
+            const lastChild = pageDiv.lastElementChild;
+            if (lastChild) {
+                applyCustomMarginBasedOnPreviousElement(newDiv, lastChild);
+            }
+
+            pageDiv.appendChild(newDiv);
+        });
+    } else {
+        alert('No saved data found.');
+    }
+}
