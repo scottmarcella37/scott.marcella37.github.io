@@ -28,7 +28,7 @@ form.addEventListener('submit', (e) => {
 
   // Save data to Firebase
   const userId = Date.now(); // Unique ID based on timestamp
-  set(ref(database, 'users/' + userId), {
+  set(ref(database, 'users/' + 123), {
     name: name,
     email: email
   })
