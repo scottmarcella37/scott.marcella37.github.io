@@ -16,3 +16,29 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
+
+
+// Handle input form
+const form = document.getElementById('dataForm');
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault(); // Prevent page refresh
+
+  // Get form values
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+
+  // Save data to Firebase
+  set(ref(database, `users/123/profile`), {
+  name: name,
+  email: email
+});
+
+  .then(() => {
+    alert('Data saved successfully!');
+    form.reset();
+  })
+  .catch((error) => {
+    alert('Error saving data: ' + error);
+  });
+});
