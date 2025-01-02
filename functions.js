@@ -27,11 +27,10 @@ form.addEventListener('submit', (e) => {
   const email = document.getElementById('email').value;
 
   // Save data to Firebase
-  const userId = Date.now(); // Unique ID based on timestamp
-  set(ref(database, 'users/' + 123), {
-    name: name,
-    email: email
-  })
+  set(ref(database, `users/123/profile`), {
+  name: name,
+  email: email
+});
   .then(() => {
     alert('Data saved successfully!');
     form.reset();
