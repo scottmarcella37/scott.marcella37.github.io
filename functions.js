@@ -17,7 +17,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-
 // Handle input form
 const form = document.getElementById('dataForm');
 
@@ -28,18 +27,19 @@ form.addEventListener('submit', (e) => {
   const name = document.getElementById('name').value;
   const email = document.getElementById('email').value;
 
+  // You must define userId here
+  const userId = 123'; // Replace 'someUserId' with your logic to get the user ID
+
   // Save data to Firebase
   set(ref(database, `users/${userId}/profile`), {
-  name: name,
-  email: email
-});
-
-
-  .then(() => {
-    alert('Data saved successfully!');
-    form.reset();
+    name: name,
+    email: email,
   })
-  .catch((error) => {
-    alert('Error saving data: ' + error);
-  });
+    .then(() => {
+      alert('Data saved successfully!');
+      form.reset();
+    })
+    .catch((error) => {
+      alert('Error saving data: ' + error);
+    });
 });
