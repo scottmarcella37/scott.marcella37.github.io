@@ -29,10 +29,11 @@ form.addEventListener('submit', (e) => {
   const email = document.getElementById('email').value;
 
   // Save data to Firebase
-  set(ref(database, `users/123/profile`), {
+  set(ref(database, `users/${userId}/profile`), {
   name: name,
   email: email
 });
+
 
   .then(() => {
     alert('Data saved successfully!');
